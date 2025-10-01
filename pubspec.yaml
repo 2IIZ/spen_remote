@@ -1,8 +1,8 @@
 name: spen_remote
 description: "A Flutter plugin to integrate with the Samsung S Pen Remote SDK."
-version: 0.0.1
-homepage: https://github.com/yourusername/spen_remote
-repository: https://github.com/yourusername/spen_remote
+version: 0.0.2
+homepage: https://github.com/2IIZ
+repository: https://github.com/2IIZ/spen_remote
 
 environment:
   sdk: ^3.9.2
