@@ -4,10 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:spen_remote/spen_remote.dart';
 
 class SPen {
-  SPen() {
-    debugPrint('SPen service initialized');
-  }
-
   StreamSubscription? _eventSubscription;
 
   void initSPen() {

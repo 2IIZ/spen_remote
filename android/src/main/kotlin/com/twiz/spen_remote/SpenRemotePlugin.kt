@@ -2,6 +2,7 @@ package com.twiz.spen_remote
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -64,8 +65,7 @@ class SpenRemotePlugin:
                     result.error("NO_ACTIVITY", "Activity context not available", null)
                     return
                 }
-                connect(act)
-                result.success(null)
+                connect(act, result)
             }
             "disconnect" -> {
                 disconnect()
@@ -75,24 +75,44 @@ class SpenRemotePlugin:
         }
     }
 
-    private fun connect(act: Activity) {
+    private fun isSpenNotSupported(): Boolean {
+        try {
+            Class.forName("com.samsung.android.feature.SemFloatingFeature")
+            return true
+        } catch (e: ClassNotFoundException) {
+            result.error("NOT_SUPPORTED", "This is not a supported Samsung device.", null)
+            return false
+        }
+    }
+
+    private fun connect(act: Activity , result: MethodChannel.Result) {
+        if(isSpenNotSupported()) return
+
         val spenRemote = SpenRemote.getInstance()
+
         if (!spenRemote.isConnected) {
             spenRemote.connect(act, object : SpenRemote.ConnectionResultCallback {
                 override fun onSuccess(manager: SpenUnitManager) {
                     spenUnitManager = manager
                     initListeners()
+                    result.success(null)
                 }
                 override fun onFailure(error: Int) {
                     activity?.runOnUiThread {
                         eventSink?.error("CONNECT_FAILED", "Error code $error", null)
                     }
+                    result.error("CONNECT_FAILED", "Connection failed with error code $error", null)
                 }
             })
+        } else {
+            // already connected
+            result.success(null)
         }
     }
 
     private fun disconnect() {
+        if(isSpenNotSupported()) return
+
         val spenRemote = SpenRemote.getInstance()
         if (spenRemote.isConnected) {
             activity?.let { spenRemote.disconnect(it) }

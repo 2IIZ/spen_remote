@@ -1,4 +1,6 @@
-## 0.0.2
+## 0.0.3
+* Fix crash on non-Samsung devices
+* ## 0.0.2
 * Pub dev analysis corrections 
 * Write some doc
 ## 0.0.1
