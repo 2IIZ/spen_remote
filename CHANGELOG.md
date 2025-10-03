@@ -1,3 +1,6 @@
+## 0.0.4
+* Fix some bugs
+* improve doc
 ## 0.0.3
 * Fix crash on non-Samsung devices
 * ## 0.0.2

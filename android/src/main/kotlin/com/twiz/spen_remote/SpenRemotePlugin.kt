@@ -68,25 +68,24 @@ class SpenRemotePlugin:
                 connect(act, result)
             }
             "disconnect" -> {
-                disconnect()
-                result.success(null)
+                disconnect(result)
             }
             else -> result.notImplemented()
         }
     }
 
-    private fun isSpenNotSupported(): Boolean {
+    private fun isSpenNotSupported(result: MethodChannel.Result): Boolean {
         try {
             Class.forName("com.samsung.android.feature.SemFloatingFeature")
-            return true
-        } catch (e: ClassNotFoundException) {
-            result.error("NOT_SUPPORTED", "This is not a supported Samsung device.", null)
             return false
+        } catch (e: ClassNotFoundException) {
+            result.error("NOT_SUPPORTED", "This is not a supported Samsung device", null)
+            return true
         }
     }
 
     private fun connect(act: Activity , result: MethodChannel.Result) {
-        if(isSpenNotSupported()) return
+        if(isSpenNotSupported(result)) return
 
         val spenRemote = SpenRemote.getInstance()
 
@@ -110,12 +109,13 @@ class SpenRemotePlugin:
         }
     }
 
-    private fun disconnect() {
-        if(isSpenNotSupported()) return
+    private fun disconnect(result: MethodChannel.Result) {
+        if(isSpenNotSupported(result)) return
 
         val spenRemote = SpenRemote.getInstance()
         if (spenRemote.isConnected) {
             activity?.let { spenRemote.disconnect(it) }
+            result.success(null)
         }
         spenUnitManager = null
     }

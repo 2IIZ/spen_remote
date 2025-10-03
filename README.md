@@ -34,7 +34,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  spen_remote: ^0.0.1
+  spen_remote: ^0.0.4
 ```
 
 No special Android permissions are required by the SDK itself.
@@ -47,11 +47,16 @@ No special Android permissions are required by the SDK itself.
 import 'package:flutter/material.dart';
 import 'package:spen_remote/spen_remote.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Connect to S Pen Remote
-  await SpenRemote.connect();
+void sPenConnect() async {
+  try {
+    await SpenRemote.connect();
+    print('S Pen connected successfully!');
+  }
+  on PlatformException catch (e) {
+    if (e.code == 'NOT_SUPPORTED') {
+      print('S Pen is not supported on this device.');
+    } 
+  }
 
   // Listen for events
   SpenRemote.events.listen((event) {
@@ -62,8 +67,6 @@ void main() async {
       print('Air motion dx=${event.dx}, dy=${event.dy}');
     }
   });
-
-  runApp(const MyApp());
 }
 ```
 
